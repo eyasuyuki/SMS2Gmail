@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.javaopen.sms2gmail"
+    android:versionCode="1"
+    android:versionName="0.1" >
+
+    <uses-sdk android:minSdkVersion="10" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <activity
+            android:name=".SMS2GmailActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+		<service android:name="ForwardService" />
+        <receiver android:name="PhoneReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.PHONE_STATE"/>
+			</intent-filter>
+		</receiver>
+		<receiver android:name="SMSReceiver">
+			<intent-filter>
+				<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+			</intent-filter>
+		</receiver>
+	</application>
+
+</manifest>
