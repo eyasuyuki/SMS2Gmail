@@ -21,7 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<service android:name="ForwardService" />
+		<service android:name="ForwardService" >
+			<intent-filter>
+				<action android:name="org.javaopen.sms2gmail.PHONE"/>
+				<action android:name="org.javaopen.sms2gmail.SMS"/>
+			</intent-filter>
+		</service>
         <receiver android:name="PhoneReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.PHONE_STATE"/>
