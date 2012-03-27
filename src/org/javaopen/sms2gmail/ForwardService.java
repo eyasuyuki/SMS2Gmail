@@ -2,6 +2,7 @@ package org.javaopen.sms2gmail;
 
 import java.util.Date;
 
+import android.app.IntentService;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,7 +14,7 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Data;
 import android.util.Log;
 
-public class ForwardService extends WakeLockService {
+public class ForwardService extends IntentService {
 	private static final String TAG = ForwardService.class.getName();
 	private static final String NEWLINE = System.getProperty("line.separator");
 	
@@ -27,7 +28,7 @@ public class ForwardService extends WakeLockService {
 	}
 	
 	@Override
-	void wakeHandler(Intent intent) {
+	protected void onHandleIntent(Intent intent) {
 		String action = intent.getAction();
 		Log.d(TAG, "wakeHandler: action="+action);
 		
@@ -47,10 +48,10 @@ public class ForwardService extends WakeLockService {
 		String number = intent.getStringExtra(PhoneReceiver.INCOMING_NUMBER_KEY);
 		Log.d(TAG, "forwardPhone: ctime="+ctime+"number="+number);
 
-		StringBuffer body = new StringBuffer();
+		StringBuffer message = new StringBuffer();
 		// ctime
-		body.append(new Date(ctime).toLocaleString());
-		body.append(NEWLINE);
+		message.append(new Date(ctime).toLocaleString());
+		message.append(NEWLINE);
 		// contact
 		Cursor c = null;
 		try {
@@ -61,10 +62,10 @@ public class ForwardService extends WakeLockService {
 					new String[]{number},
 					Phone.LABEL);
 			if (c != null) {
-				body.append("name=");
+				message.append("name=");
 				while (c.moveToNext()) {
 					int i = 0;
-					body.append(c.getString(i++));
+					message.append(c.getString(i++));
 				}
 			}
 		} catch (Exception e) {
@@ -72,15 +73,15 @@ public class ForwardService extends WakeLockService {
 		} finally {
 			if (c != null) c.close();
 		}
-		if (body.length() > 0) body.append(NEWLINE);
+		if (message.length() > 0) message.append(NEWLINE);
 
 		// number
-		body.append("tel:");
-		body.append(number);
-		body.append(NEWLINE);
+		message.append("tel:");
+		message.append(number);
+		message.append(NEWLINE);
 
 		if (account == null) {
-			Log.d(TAG, "onStart: account is null. ctime="+ctime+", number="+number+", body="+body);
+			Log.d(TAG, "onStart: account is null. ctime="+ctime+", number="+number+", message="+message);
 			return;
 		}
 		
@@ -90,7 +91,7 @@ public class ForwardService extends WakeLockService {
 		String subject = sp.getString(key, def);
 		
 		// gmail
-		gmail(account, subject, body.toString());
+		gmail(account, subject, message.toString());
 	}
 	
 	void forwardSMS(Intent intent) {
@@ -109,7 +110,20 @@ public class ForwardService extends WakeLockService {
 		String def = getString(R.string.sms_subject_default);
 		String subject = sp.getString(key, def);
 		// TODO gmail
-		gmail(account, subject, body);
+		StringBuffer message = new StringBuffer();
+		// ctime
+		message.append(new Date(ctime).toLocaleString());
+		message.append(NEWLINE);
+		// from
+		message.append("from=");
+		message.append(from);
+		message.append(NEWLINE);
+		// body
+		message.append("body=");
+		message.append(body);
+		message.append(NEWLINE);
+		
+		gmail(account, subject, message.toString());
 	}
 	
 	public void gmail(String to, String subject, String body) {

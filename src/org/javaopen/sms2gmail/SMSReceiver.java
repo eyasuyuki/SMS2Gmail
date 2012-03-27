@@ -37,16 +37,22 @@ public class SMSReceiver extends BroadcastReceiver {
 	        	Log.d(TAG, "onReceive: time=" + Long.toString(timestamp));
 	        	Log.d(TAG, "onReceive: body=" + body.replaceAll("\n", "\t"));
 	        	
-	        	Intent service = new Intent(context, AlarmReceiver.class);
+//	        	Intent broadcast = new Intent(context, AlarmReceiver.class);
+//	        	broadcast.setAction(ForwardService.FORWARD_SMS);
+//	        	broadcast.putExtra(FROM_KEY, from);
+//	        	broadcast.putExtra(TIMESTAMP_KEY, timestamp);
+//	        	broadcast.putExtra(BODY_KEY, body);
+//	        	
+//	        	PendingIntent pending =
+//	        			PendingIntent.getBroadcast(context, 0, broadcast, 0);
+//	        	long interval = i * INTERVAL;
+//	        	am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+interval, pending);
+	        	Intent service = new Intent(context, ForwardService.class);
 	        	service.setAction(ForwardService.FORWARD_SMS);
 	        	service.putExtra(FROM_KEY, from);
 	        	service.putExtra(TIMESTAMP_KEY, timestamp);
 	        	service.putExtra(BODY_KEY, body);
-	        	
-	        	PendingIntent pending =
-	        			PendingIntent.getBroadcast(context, 0, service, 0);
-	        	long interval = i * INTERVAL;
-	        	am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+interval, pending);
+	        	context.startService(service);
 	        }
 		}
     }
