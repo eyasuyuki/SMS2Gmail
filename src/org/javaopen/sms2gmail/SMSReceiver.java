@@ -37,7 +37,7 @@ public class SMSReceiver extends BroadcastReceiver {
 	        	Log.d(TAG, "onReceive: time=" + Long.toString(timestamp));
 	        	Log.d(TAG, "onReceive: body=" + body.replaceAll("\n", "\t"));
 	        	
-	        	Intent service = new Intent(context, ForwardService.class);
+	        	Intent service = new Intent(context, AlarmReceiver.class);
 	        	service.setAction(ForwardService.FORWARD_SMS);
 	        	service.putExtra(FROM_KEY, from);
 	        	service.putExtra(TIMESTAMP_KEY, timestamp);

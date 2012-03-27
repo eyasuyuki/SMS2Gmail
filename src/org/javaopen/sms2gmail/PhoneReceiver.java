@@ -22,8 +22,8 @@ public class PhoneReceiver extends BroadcastReceiver {
 		
 		if (incoming != null) {
 			Intent service = new Intent(context, ForwardService.class);
-			service.putExtra(CTIME_KEY, ctime);
 			service.setAction(ForwardService.FORWARD_PHONE);
+			service.putExtra(CTIME_KEY, ctime);
 			service.putExtra(INCOMING_NUMBER_KEY, incoming);
 			context.startService(service);
 		}
