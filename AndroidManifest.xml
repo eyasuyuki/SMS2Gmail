@@ -13,7 +13,7 @@
 
     <application android:label="@string/app_name" 
         android:icon="@drawable/ic_launcher">
-        <activity android:name=".SMS2GmailActivity"
+        <activity android:name=".Preferences"
             android:label="@string/app_name"
             android:screenOrientation="nosensor">
             <intent-filter>
@@ -21,18 +21,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-		<service android:name="ForwardService" >
+		<service android:name=".ForwardService" >
 			<intent-filter>
 				<action android:name="org.javaopen.sms2gmail.PHONE"/>
 				<action android:name="org.javaopen.sms2gmail.SMS"/>
 			</intent-filter>
 		</service>
-        <receiver android:name="PhoneReceiver">
+        <receiver android:name=".PhoneReceiver">
 			<intent-filter>
 				<action android:name="android.intent.action.PHONE_STATE"/>
 			</intent-filter>
 		</receiver>
-		<receiver android:name="SMSReceiver">
+		<receiver android:name=".SMSReceiver">
 			<intent-filter>
 				<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
 			</intent-filter>
