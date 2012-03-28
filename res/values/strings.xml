@@ -16,6 +16,6 @@
 	<string name="sms_subject_title">SMS subject</string>
 	<string name="sms_subject_default">New incoming SMS</string>
 	<!-- password dialog -->
-	<string name="password_dialog_ok_button_label">Ok</string>
+	<string name="password_dialog_ok_button_label">OK</string>
 	<string name="password_dialog_cancel_button_label">Cancel</string>
 </resources>
