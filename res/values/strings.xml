@@ -6,14 +6,16 @@
 	<string name="activated_title">Activated</string>
 	<string name="account_key">account</string>
 	<string name="account_title">Account</string>
+	<string name="select_account_title">Select account</string>
 	<string name="password_key">password</string>
-	<string name="password_title">password</string>
+	<string name="password_title">Gmail password</string>
 	<string name="phone_subject_key">phone_subject</string>
 	<string name="phone_subject_title">Phone subject</string>
 	<string name="phone_subject_default">New incoming phone</string>
 	<string name="sms_subject_key">sms_subject</string>
 	<string name="sms_subject_title">SMS subject</string>
 	<string name="sms_subject_default">New incoming SMS</string>
-	<!-- select account -->
-	<string name="select_account_title">Select account:</string>
+	<!-- password dialog -->
+	<string name="password_dialog_ok_button_label">Ok</string>
+	<string name="password_dialog_cancel_button_label">Cancel</string>
 </resources>
