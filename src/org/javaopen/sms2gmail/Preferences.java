@@ -7,7 +7,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -17,6 +16,9 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class Preferences extends PreferenceActivity {
 	
@@ -126,14 +128,15 @@ public class Preferences extends PreferenceActivity {
     	}
     	accountList.setDefaultValue(account);
     	accountList.setSummary(account);
-		accountChooser(accountNames, account);
 		// password
 		String passwordText = sp.getString(passwordKey, null);
 		if (passwordText != null) {
 			StringBuffer buf = new StringBuffer();
 			for (int i=0; i<passwordText.length(); i++) buf.append("*");
 	    	passwordEdit.setSummary(buf.toString());
+	    	passwordEdit.setDialogMessage(account);
 		}
+		passwordDialog(passwordText); // TEST
     	// phone
     	String phoneSubjectDefault = getString(R.string.phone_subject_default);
     	String phoneSubjectText = sp.getString(phoneSubjectKey, phoneSubjectDefault);
@@ -146,31 +149,14 @@ public class Preferences extends PreferenceActivity {
     	smsSubjectEdit.setSummary(smsSubjectText);
     }
     
-    void accountChooser(String[] accounts, String prev) {
+    void passwordDialog(String passwordText) {
+    	LayoutInflater inflater = getLayoutInflater();
+    	View dialoglayout =
+    			inflater.inflate(R.layout.dialog_layout, (ViewGroup)getCurrentFocus());
     	AlertDialog.Builder builder =
     			new AlertDialog.Builder(this);
-    	builder.setTitle(R.string.select_account_title);
-    	int checkedItem = 0;
-    	for (int i=0; i<accounts.length; i++) {
-    		if (prev != null && accounts[i] != null && prev.equals(accounts[i])) {
-    			checkedItem = i;
-    			break;
-    		}
-    	}
-    	builder.setSingleChoiceItems(accounts, checkedItem, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				if (accountNames != null) {
-					String account = accountNames[which];
-			    	SharedPreferences sp =
-			    			PreferenceManager.getDefaultSharedPreferences(Preferences.this);
-			    	String key = getString(R.string.account_key);
-			    	Editor editor = sp.edit();
-			    	editor.putString(key, account);
-			    	editor.commit();
-				}
-			}
-		});
+    	builder.setView(dialoglayout);
+    	builder.setTitle(R.string.password_title);
     	builder.show();
     }
 }
