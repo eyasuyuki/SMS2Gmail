@@ -1,13 +1,20 @@
 package org.javaopen.sms2gmail;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import android.app.IntentService;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -33,7 +40,12 @@ public class ForwardService extends IntentService {
 		Log.d(TAG, "wakeHandler: action="+action);
 		
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		String key = getString(R.string.account_key);
+
+		String key = getString(R.string.activated_key);
+		boolean activated = sp.getBoolean(key, false);
+		if (!activated) return;
+		
+		key = getString(R.string.account_key);
 		account = sp.getString(key, null);
 		
 		if (FORWARD_PHONE.equals(action)) {
@@ -127,16 +139,35 @@ public class ForwardService extends IntentService {
 	}
 	
 	public void gmail(String to, String subject, String body) {
-	    Intent intent = new Intent(Intent.ACTION_SENDTO);
-	    intent.setClassName("com.google.android.gm", "com.google.android.gm.ComposeActivityGmail");
-	    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	    intent.setData(Uri.parse("mailto:" + to));
-	    intent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
-	    intent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+	    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+	    String key = getString(R.string.account_key);
+	    String login = sp.getString(key, null);
+	    key = getString(R.string.password_key);
+	    String password = sp.getString(key, null);
+	    
+	    Properties props = new Properties();
+	    props.put("mail.smtp.host", "smtp.gmail.com"); // SMTPサーバ名
+	    props.put("mail.host", "smtp.gmail.com");      // 接続するホスト名
+	    props.put("mail.smtp.port", "587");       // SMTPサーバポート
+	    props.put("mail.smtp.auth", "true");    // smtp auth
+	    props.put("mail.smtp.starttls.enable", "true"); // STTLS
+	    
+	    Session session = Session.getDefaultInstance(props);
+	    session.setDebug(true);
+
+	    MimeMessage msg = new MimeMessage(session);
 	    try {
-	      startActivity(intent);
-	    } catch(ActivityNotFoundException ex) {
-	      ex.printStackTrace();
+	        msg.setSubject(subject, "utf-8");
+	        msg.setFrom(new InternetAddress(login));
+	        msg.setSender(new InternetAddress(login));
+	        msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+	        msg.setText(body,  "utf-8");
+
+	        Transport t = session.getTransport("smtp");
+	        t.connect(login, password);
+	        t.sendMessage(msg, msg.getAllRecipients());
+	    } catch (MessagingException e) {
+	        e.printStackTrace();
 	    }
 	}
 
