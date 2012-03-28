@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference android:key="@string/activated_key" android:title="@string/activated_title"/>
+    <ListPreference android:title="@string/account_title" android:key="@string/account_key" android:dialogTitle="@string/select_account_title"/>
+    <EditTextPreference android:title="@string/password_title" android:dialogTitle="@string/password_title" android:key="@string/password_key"/>
+    <EditTextPreference android:title="@string/phone_subject_title" android:key="@string/phone_subject_key"/>
+    <EditTextPreference android:title="@string/sms_subject_title" android:key="@string/sms_subject_key"/>
+    
+
+</PreferenceScreen>
