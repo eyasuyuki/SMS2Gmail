@@ -5,26 +5,11 @@
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:padding="10dp">
-	<TextView android:text="@string/password_title"
+	<TextView android:id="@+id/password_dialog_message"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"/>
 	<EditText android:id="@+id/password_dialog_edit"
 	    android:inputType="textPassword"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"/>
-	<LinearLayout
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
-	    <Button android:id="@+id/password_dialog_ok_button"
-	        android:text="@string/password_dialog_ok_button_label"
-	        android:layout_weight="1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" />
-	    <Button android:id="@+id/password_dialog_cancel_button"
-	        android:text="@string/password_dialog_cancel_button_label"
-	        android:layout_weight="1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" />
-	</LinearLayout>	    
 </LinearLayout>
