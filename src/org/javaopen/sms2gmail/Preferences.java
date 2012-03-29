@@ -7,6 +7,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class Preferences extends PreferenceActivity {
 	
@@ -130,13 +133,7 @@ public class Preferences extends PreferenceActivity {
     	accountList.setSummary(account);
 		// password
 		String passwordText = sp.getString(passwordKey, null);
-		if (passwordText != null) {
-			StringBuffer buf = new StringBuffer();
-			for (int i=0; i<passwordText.length(); i++) buf.append("*");
-	    	passwordEdit.setSummary(buf.toString());
-	    	passwordEdit.setDialogMessage(account);
-		}
-		passwordDialog(passwordText); // TEST
+		askPassword(account, passwordText);
     	// phone
     	String phoneSubjectDefault = getString(R.string.phone_subject_default);
     	String phoneSubjectText = sp.getString(phoneSubjectKey, phoneSubjectDefault);
@@ -149,14 +146,59 @@ public class Preferences extends PreferenceActivity {
     	smsSubjectEdit.setSummary(smsSubjectText);
     }
     
-    void passwordDialog(String passwordText) {
+    static void setPasswordSummary(EditTextPreference preference, String account, String password) {
+		if (password != null) {
+			StringBuffer buf = new StringBuffer();
+			for (int i=0; i<password.length(); i++) buf.append("*");
+	    	preference.setSummary(buf.toString());
+	    	preference.setDialogMessage(account);
+		}
+    }
+
+    AlertDialog passwordDialog = null;
+    EditText passwordEditText = null;
+    
+    final Context context = this;
+    
+    void askPassword(final String account, String passwordText) {
     	LayoutInflater inflater = getLayoutInflater();
     	View dialoglayout =
     			inflater.inflate(R.layout.dialog_layout, (ViewGroup)getCurrentFocus());
+    	TextView messageText =
+    			(TextView)dialoglayout.findViewById(R.id.password_dialog_message);
+    	messageText.setText(account);
+    	passwordEditText =
+    			(EditText)dialoglayout.findViewById(R.id.password_dialog_edit);
+    	passwordEditText.setText(passwordText);
+
     	AlertDialog.Builder builder =
     			new AlertDialog.Builder(this);
     	builder.setView(dialoglayout);
     	builder.setTitle(R.string.password_title);
-    	builder.show();
+    	builder.setPositiveButton(R.string.password_dialog_ok_button_label, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+		    	SharedPreferences sp =
+		    			PreferenceManager.getDefaultSharedPreferences(context);
+		    	Editor editor = sp.edit();
+		    	String key = context.getString(R.string.password_key);
+		    	String password = passwordEditText.getText().toString();
+		    	editor.putString(key, password);
+		    	editor.commit();
+		    	
+		    	setPasswordSummary(passwordEdit, account, password);
+		    	
+				passwordDialog.dismiss();
+			}
+		});
+    	builder.setNegativeButton(R.string.password_dialog_cancel_button_label, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				passwordDialog.dismiss();
+			}
+		});
+    	passwordDialog = builder.create();
+    	
+    	passwordDialog.show();
     }
 }
