@@ -1,6 +1,5 @@
 package org.javaopen.sms2gmail;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
 
@@ -17,6 +16,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Data;
 import android.util.Log;
@@ -69,10 +69,10 @@ public class ForwardService extends IntentService {
 		try {
 			c = getContentResolver().query(
 					Data.CONTENT_URI, 
-					new String[]{ Phone.LABEL }, 
+					new String[]{ ContactsContract.Contacts.DISPLAY_NAME }, 
 					Phone.NUMBER + " = ? ", 
 					new String[]{number},
-					Phone.LABEL);
+					null);
 			if (c != null) {
 				message.append("name=");
 				while (c.moveToNext()) {
