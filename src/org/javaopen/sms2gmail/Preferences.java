@@ -133,6 +133,7 @@ public class Preferences extends PreferenceActivity {
     	accountList.setSummary(account);
 		// password
 		String passwordText = sp.getString(passwordKey, null);
+		setPasswordSummary(passwordEdit, account, passwordText);
 		askPassword(account, passwordText);
     	// phone
     	String phoneSubjectDefault = getString(R.string.phone_subject_default);
