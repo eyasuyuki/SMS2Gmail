@@ -64,33 +64,12 @@ public class ForwardService extends IntentService {
 		// ctime
 		message.append(new Date(ctime).toLocaleString());
 		message.append(NEWLINE);
-		// contact
-		Cursor c = null;
-		try {
-			c = getContentResolver().query(
-					Data.CONTENT_URI, 
-					new String[]{ ContactsContract.Contacts.DISPLAY_NAME }, 
-					Phone.NUMBER + " = ? ", 
-					new String[]{number},
-					null);
-			if (c != null) {
-				message.append("name=");
-				while (c.moveToNext()) {
-					int i = 0;
-					message.append(c.getString(i++));
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (c != null) c.close();
-		}
-		if (message.length() > 0) message.append(NEWLINE);
-
 		// number
 		message.append("tel:");
 		message.append(number);
 		message.append(NEWLINE);
+		// contact
+		getDisplayName(number, message);
 
 		if (account == null) {
 			Log.d(TAG, "onStart: account is null. ctime="+ctime+", number="+number+", message="+message);
@@ -104,6 +83,33 @@ public class ForwardService extends IntentService {
 		
 		// gmail
 		gmail(account, subject, message.toString());
+	}
+	
+	void getDisplayName(String number, StringBuffer message) {
+		Cursor c = null;
+		try {
+			c = getContentResolver().query(
+					Data.CONTENT_URI, 
+					new String[]{ ContactsContract.Contacts.DISPLAY_NAME }, 
+					Phone.NUMBER + " = ? ", 
+					new String[]{number},
+					null);
+			if (c != null) {
+				while (c.moveToNext()) {
+					int i = 0;
+					String name = c.getString(i++);
+					if (name != null && name.length() > 0) {
+						message.append("name=");
+						message.append(name);
+						message.append(NEWLINE);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (c != null) c.close();
+		}
 	}
 	
 	void forwardSMS(Intent intent) {
@@ -130,6 +136,8 @@ public class ForwardService extends IntentService {
 		message.append("from=");
 		message.append(from);
 		message.append(NEWLINE);
+		// contact
+		getDisplayName(from, message);
 		// body
 		message.append("body=");
 		message.append(body);
