@@ -34,12 +34,14 @@ public class Preferences extends PreferenceActivity {
 	String passwordKey = null;
 	String phoneSubjectKey = null;
 	String smsSubjectKey = null;
+	String replyBodyKey = null;
 	
 	CheckBoxPreference activatedBox = null;
 	ListPreference accountList = null;
 	EditTextPreference passwordEdit = null;
 	EditTextPreference phoneSubjectEdit = null;
 	EditTextPreference smsSubjectEdit = null;
+	EditTextPreference replyBodyEdit = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,6 +63,9 @@ public class Preferences extends PreferenceActivity {
         // sms
         smsSubjectKey = getString(R.string.sms_subject_key);
         smsSubjectEdit = (EditTextPreference)findPreference(smsSubjectKey);
+        // reply bodi
+        replyBodyKey = getString(R.string.reply_body_key);
+        replyBodyEdit = (EditTextPreference)findPreference(replyBodyKey);
 
         accountList.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 			@Override
@@ -94,6 +99,15 @@ public class Preferences extends PreferenceActivity {
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				smsSubjectEdit.setSummary(newValue.toString());
+				return true;
+			}
+		});
+        
+        replyBodyEdit.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				replyBodyEdit.setSummary(newValue.toString());
 				return true;
 			}
 		});
@@ -145,6 +159,11 @@ public class Preferences extends PreferenceActivity {
     	String smsSubjectText = sp.getString(smsSubjectKey, smsSubjectDefault);
     	smsSubjectEdit.setText(smsSubjectText);
     	smsSubjectEdit.setSummary(smsSubjectText);
+    	// reply body
+    	String replyBodyDefault = getString(R.string.reply_body_default);
+    	String replyBodyText = sp.getString(replyBodyKey, replyBodyDefault);
+    	replyBodyEdit.setText(replyBodyText);
+    	replyBodyEdit.setSummary(replyBodyText);
     }
     
     static void setPasswordSummary(EditTextPreference preference, String account, String password) {
