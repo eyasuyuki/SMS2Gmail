@@ -11,6 +11,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -19,6 +20,8 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.Data;
+import android.telephony.SmsManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 public class ForwardService extends IntentService {
@@ -55,10 +58,35 @@ public class ForwardService extends IntentService {
 		}
 	}
 	
+	boolean isReply() {
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		String key = getString(R.string.reply_sms_key);
+		return sp.getBoolean(key, false);
+	}
+	
+	void replySms(String number) {
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		String key = getString(R.string.reply_sms_key);
+		boolean reply = sp.getBoolean(key, false);
+		if (reply) {
+			key = getString(R.string.reply_body_key);
+			String def = getString(R.string.reply_body_default);
+			String text = sp.getString(key, def);
+			
+			TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+			String myNumber = tm.getLine1Number();
+			
+			SmsManager sm = SmsManager.getDefault();
+			sm.sendTextMessage(number, myNumber, text, null, null);
+		}
+	}
+	
 	void forwardPhone(Intent intent) {
 		long ctime = intent.getLongExtra(PhoneReceiver.CTIME_KEY, System.currentTimeMillis());
 		String number = intent.getStringExtra(PhoneReceiver.INCOMING_NUMBER_KEY);
 		Log.d(TAG, "forwardPhone: ctime="+ctime+"number="+number);
+		
+		replySms(number);
 
 		StringBuffer message = new StringBuffer();
 		// ctime
@@ -117,6 +145,8 @@ public class ForwardService extends IntentService {
 		String from = intent.getStringExtra(SMSReceiver.FROM_KEY);
 		String body = intent.getStringExtra(SMSReceiver.BODY_KEY);
 		Log.d(TAG, "forwardSMS: ctime="+ctime+", from="+from+", body="+body);
+		
+		replySms(from);
 
 		if (account == null) {
 			Log.d(TAG, "onStart: account is null. ctime="+ctime+", from="+from+", body="+body);
@@ -154,9 +184,9 @@ public class ForwardService extends IntentService {
 	    String password = sp.getString(key, null);
 	    
 	    Properties props = new Properties();
-	    props.put("mail.smtp.host", "smtp.gmail.com"); // SMTPサーバ名
-	    props.put("mail.host", "smtp.gmail.com");      // 接続するホスト名
-	    props.put("mail.smtp.port", "587");       // SMTPサーバポート
+	    props.put("mail.smtp.host", "smtp.gmail.com"); // SMTPサーバー
+	    props.put("mail.host", "smtp.gmail.com");      // ホスト
+	    props.put("mail.smtp.port", "587");       // SMTPポート 
 	    props.put("mail.smtp.auth", "true");    // smtp auth
 	    props.put("mail.smtp.starttls.enable", "true"); // STTLS
 	    
