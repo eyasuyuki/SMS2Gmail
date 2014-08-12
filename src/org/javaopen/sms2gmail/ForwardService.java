@@ -58,10 +58,9 @@ public class ForwardService extends IntentService {
 		}
 	}
 	
-	boolean isReply() {
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		String key = getString(R.string.reply_sms_key);
-		return sp.getBoolean(key, false);
+	String getMyNumber() {
+		TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+		return tm.getLine1Number();
 	}
 	
 	void replySms(String number) {
@@ -73,11 +72,8 @@ public class ForwardService extends IntentService {
 			String def = getString(R.string.reply_body_default);
 			String text = sp.getString(key, def);
 			
-			TelephonyManager tm = (TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
-			String myNumber = tm.getLine1Number();
-			
 			SmsManager sm = SmsManager.getDefault();
-			sm.sendTextMessage(number, myNumber, text, null, null);
+			sm.sendTextMessage(number, getMyNumber(), text, null, null);
 		}
 	}
 	
@@ -91,6 +87,10 @@ public class ForwardService extends IntentService {
 		StringBuffer message = new StringBuffer();
 		// ctime
 		message.append(new Date(ctime).toLocaleString());
+		message.append(NEWLINE);
+		// my number
+		message.append("my number:");
+		message.append(getMyNumber());
 		message.append(NEWLINE);
 		// number
 		message.append("tel:");
@@ -161,6 +161,10 @@ public class ForwardService extends IntentService {
 		StringBuffer message = new StringBuffer();
 		// ctime
 		message.append(new Date(ctime).toLocaleString());
+		message.append(NEWLINE);
+		// my number
+		message.append("my number=");
+		message.append(getMyNumber());
 		message.append(NEWLINE);
 		// from
 		message.append("from=");
