@@ -18,7 +18,7 @@
 	<string name="reply_sms_key">reply_sms</string>
 	<string name="reply_sms_title">Reply via SMS</string>
 	<string name="reply_body_key">reply_body</string>
-	<string name="reply_body_title">Reply body</string>
+	<string name="reply_body_title">Reply text</string>
 	<string name="reply_body_default">Sory, call later.</string>
 	<!-- password dialog -->
 	<string name="password_dialog_ok_button_label">OK</string>
