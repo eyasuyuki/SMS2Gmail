@@ -13,4 +13,8 @@
         android:title="@string/phone_subject_title"/>
     <EditTextPreference android:key="@string/sms_subject_key"
         android:title="@string/sms_subject_title" />
+    <CheckBoxPreference android:key="@string/reply_sms_key"
+        android:title="@string/reply_sms_title" />
+    <EditTextPreference android:key="@string/reply_body_key"
+        android:title="@string/reply_body_title" />
 </PreferenceScreen>
