@@ -30,12 +30,12 @@
 			</intent-filter>
 		</service>
         <receiver android:name=".PhoneReceiver">
-			<intent-filter>
+			<intent-filter android:priority="32767">
 				<action android:name="android.intent.action.PHONE_STATE"/>
 			</intent-filter>
 		</receiver>
 		<receiver android:name=".SMSReceiver">
-			<intent-filter>
+			<intent-filter android:priority="32767">
 				<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
 			</intent-filter>
 		</receiver>
