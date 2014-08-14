@@ -1,1 +1,4 @@
 Forward SMS and incoming phone call to Gmail.
+
+Note: If you use 2-step verification,
+Please create a application specific password and set it this.
