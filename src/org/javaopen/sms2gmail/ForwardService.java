@@ -67,13 +67,15 @@ public class ForwardService extends IntentService {
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		String key = getString(R.string.reply_sms_key);
 		boolean reply = sp.getBoolean(key, false);
+		Log.d(TAG, "replySms: number="+number+", reply="+reply);
 		if (reply) {
 			key = getString(R.string.reply_body_key);
 			String def = getString(R.string.reply_body_default);
 			String text = sp.getString(key, def);
+			Log.d(TAG, "replySms: text="+text);
 			
 			SmsManager sm = SmsManager.getDefault();
-			sm.sendTextMessage(number, getMyNumber(), text, null, null);
+			sm.sendTextMessage(number, null, text, null, null);
 		}
 	}
 	
